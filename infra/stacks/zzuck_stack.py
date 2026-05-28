@@ -20,7 +20,7 @@ class ZzuckStack(cdk.Stack):
         vpc = ec2.Vpc(
             self,
             "VPC",
-            max_azs=2,
+            availability_zones=["us-east-1a", "us-east-1b"],
             nat_gateways=1,
         )
 

@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from worker.app.handlers.handler_log import handle_message
+from app.handlers.handler_log import handle_message
 from app.worker import poll
 
 
@@ -27,7 +27,7 @@ def test_worker_processes_messages():
         # _running is False so the loop body never executes via start_worker(),
         # so we call the loop logic directly
         for msg in fake_messages:
-            from worker.app.handlers.handler_log import handle_message as real_handle
+            from app.handlers.handler_log import handle_message as real_handle
             real_handle(msg)
 
     # both messages handled without error
