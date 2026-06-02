@@ -8,7 +8,6 @@ from app.temp_memory import INTERVIEW_SESSIONS
 from app.services.openai_client import get_openai_client
 
 
-client = get_openai_client()
 router = APIRouter(prefix="/interview", tags=["Interview"])
 
 MAX_FOLLOW_UP_DEPTH = 2
@@ -16,6 +15,7 @@ MAX_FOLLOW_UP_DEPTH = 2
 
 @router.post("/start")
 def start_interview(request: InterviewStartRequest):
+    client = get_openai_client()
     prompt = f"""
 You are an interview coach.
 
@@ -82,6 +82,7 @@ Return ONLY valid JSON in this exact format:
 
 @router.post("/answer")
 def answer_interview(request: InterviewAnswerRequest):
+    client = get_openai_client()
     session = INTERVIEW_SESSIONS.get(request.session_id)
 
     if not session:
