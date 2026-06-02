@@ -1,4 +1,9 @@
+from functools import lru_cache
 from openai import OpenAI
+
 from app.config import OPENAI_API_KEY
 
-client = OpenAI(api_key=OPENAI_API_KEY)
+
+@lru_cache
+def get_openai_client():
+    return OpenAI(api_key=OPENAI_API_KEY)
