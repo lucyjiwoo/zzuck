@@ -5,8 +5,10 @@ from fastapi import APIRouter, HTTPException
 
 from app.models import InterviewStartRequest, InterviewAnswerRequest
 from app.temp_memory import INTERVIEW_SESSIONS
-from app.services.openai_client import client
+from app.services.openai_client import get_openai_client
 
+
+client = get_openai_client()
 router = APIRouter(prefix="/interview", tags=["Interview"])
 
 MAX_FOLLOW_UP_DEPTH = 2
