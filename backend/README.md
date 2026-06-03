@@ -1,6 +1,6 @@
 # Backend
 
-FastAPI REST API server. Handles interview session management, question delivery, and publishes evaluation jobs to SQS. Deployed to AWS ECS Fargate.
+FastAPI REST API. Receives requests from the frontend, persists job state in PostgreSQL, dispatches evaluation jobs to SQS, and returns results to the client. Deployed to AWS ECS Fargate.
 
 ## Stack
 
@@ -9,10 +9,18 @@ FastAPI REST API server. Handles interview session management, question delivery
 | Framework | FastAPI |
 | Language | Python 3.11 |
 | Validation | Pydantic v2 |
-| Database | PostgreSQL + pgvector (via RDS) |
+| Database | PostgreSQL + pgvector (AWS RDS) |
 | Storage | AWS S3 |
 | Queue | AWS SQS (producer) |
 | Deployment | AWS ECS Fargate |
+
+## Role in the System
+
+1. Accepts resume + job description upload → stores in S3
+2. Creates an interview job record in PostgreSQL with status `PENDING`
+3. Publishes a job message to SQS for the worker pool
+4. Exposes a Result API endpoint for the frontend to poll job status (`PENDING → PROCESSING → COMPLETED → FAILED`)
+5. Returns evaluation results and feedback once the worker completes
 
 ## Local Development
 
@@ -26,7 +34,7 @@ cp .env.example .env        # fill in credentials
 uvicorn app.main:app --reload --port 8000
 ```
 
-API is available at `http://localhost:8000`.
+API available at `http://localhost:8000`.
 
 ## Environment Variables
 
@@ -41,8 +49,8 @@ API is available at `http://localhost:8000`.
 | `AWS_REGION` | AWS region (default: `us-east-1`) |
 | `AWS_ACCESS_KEY_ID` | AWS access key |
 | `AWS_SECRET_ACCESS_KEY` | AWS secret key |
-| `S3_BUCKET_NAME` | S3 bucket for resume/JD storage |
-| `SQS_QUEUE_URL` | SQS queue URL for job publishing |
+| `S3_BUCKET_NAME` | S3 bucket for resume / JD storage |
+| `SQS_QUEUE_URL` | SQS queue URL for job dispatch |
 | `BACKEND_SECRET_KEY` | Secret key for signing tokens |
 | `BACKEND_CORS_ORIGINS` | Allowed CORS origins (default: `http://localhost:3000`) |
 
@@ -60,4 +68,4 @@ pytest
 |---|---|---|
 | `GET` | `/health` | Health check |
 
-More endpoints will be added as features are implemented.
+More endpoints added as features are implemented.

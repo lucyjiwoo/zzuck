@@ -1,6 +1,6 @@
 # Frontend
 
-React + TypeScript single-page application built with Vite. Deployed to Vercel on push to `main`.
+React + TypeScript SPA for the zzuck mock interview platform. Handles the full interview session UX — resume upload, live questioning, and result display. Deployed to Vercel on push to `main`.
 
 ## Stack
 
@@ -11,6 +11,13 @@ React + TypeScript single-page application built with Vite. Deployed to Vercel o
 | Bundler | Vite |
 | Linting | ESLint |
 | Deployment | Vercel |
+
+## Role in the System
+
+- Submits resume and target role to the backend to initiate an interview job
+- Displays AI-generated questions one at a time and collects answers
+- Polls the Result API (or connects via WebSocket) to display evaluation feedback once the worker pipeline completes
+- Shows session history and performance dashboards
 
 ## Local Development
 
@@ -40,4 +47,4 @@ See [.env.example](./.env.example).
 
 ## Deployment
 
-Vercel auto-deploys on push to `main`. Set the environment variables in the Vercel project settings.
+Vercel auto-deploys on push to `main`. Set environment variables in the Vercel project settings.
