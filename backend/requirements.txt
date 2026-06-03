@@ -1,5 +1,10 @@
 fastapi
-uvicorn[standard]
-openai
-python-dotenv
-pytest
+uvicorn
+
+sqlalchemy
+psycopg[binary]
+alembic
+pgvector
+
+pydantic
+pydantic-settings

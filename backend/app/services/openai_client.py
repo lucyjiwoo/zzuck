@@ -1,9 +1,9 @@
-from functools import lru_cache
 from openai import OpenAI
 
-from app.config import OPENAI_API_KEY
+from app.config import settings
 
 
-@lru_cache
 def get_openai_client():
-    return OpenAI(api_key=OPENAI_API_KEY)
+    return OpenAI(
+        api_key=settings.openai_api_key
+    )

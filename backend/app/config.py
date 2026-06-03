@@ -1,7 +1,25 @@
-from dotenv import load_dotenv
-import os
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-load_dotenv()
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-# Add any other configuration variables as needed
+class Settings(BaseSettings):
+    # Environment
+    app_env: str = "local"
+
+    # OpenAI
+    openai_api_key: str
+
+    # Database
+    database_url: str
+
+    # AWS
+    aws_endpoint_url: str | None = None
+    sqs_queue_url: str | None = None
+    s3_bucket_name: str | None = None
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        extra="ignore",
+    )
+
+
+settings = Settings()
