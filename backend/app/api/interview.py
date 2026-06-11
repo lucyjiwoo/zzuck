@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -45,6 +47,7 @@ def start_interview(request: InterviewStartRequest, db: Session = Depends(get_db
 
     return {
         "session_id": session.id,
+        "status": session.status,
         "questions": [
             {"id": q.id, "question_text": q.question_text, "type": q.question_type}
             for q in questions
@@ -58,12 +61,19 @@ def submit_answer(session_id: int, request: InterviewAnswerRequest, db: Session 
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
 
+    if session.status == SessionStatus.completed:
+        raise HTTPException(status_code=400, detail="Session is already completed")
+
     question = db.query(Question).filter(
         Question.id == request.question_id,
         Question.session_id == session_id,
     ).first()
     if not question:
         raise HTTPException(status_code=404, detail="Question not found in this session")
+
+    # Move to processing on first answer
+    if session.status == SessionStatus.pending:
+        session.status = SessionStatus.processing
 
     answer = Answer(
         question_id=question.id,
@@ -73,12 +83,17 @@ def submit_answer(session_id: int, request: InterviewAnswerRequest, db: Session 
     db.add(answer)
     db.flush()
 
-    result = evaluate_answer(
-        interview_type=session.interview_type,
-        question_text=question.question_text,
-        answer=request.answer,
-        follow_up_depth=question.follow_up_depth,
-    )
+    try:
+        result = evaluate_answer(
+            interview_type=session.interview_type,
+            question_text=question.question_text,
+            answer=request.answer,
+            follow_up_depth=question.follow_up_depth,
+        )
+    except Exception:
+        session.status = SessionStatus.failed
+        db.commit()
+        raise HTTPException(status_code=500, detail="Evaluation failed")
 
     db.add(Feedback(
         answer_id=answer.id,
@@ -124,6 +139,25 @@ def submit_answer(session_id: int, request: InterviewAnswerRequest, db: Session 
     }
 
 
+@router.post("/{session_id}/complete")
+def complete_interview(session_id: int, db: Session = Depends(get_db)):
+    session = db.query(InterviewSession).filter(InterviewSession.id == session_id).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if session.status == SessionStatus.completed:
+        raise HTTPException(status_code=400, detail="Session is already completed")
+
+    if session.status == SessionStatus.pending:
+        raise HTTPException(status_code=400, detail="Cannot complete a session with no answers")
+
+    session.status = SessionStatus.completed
+    session.completed_at = datetime.now(timezone.utc)
+    db.commit()
+
+    return {"session_id": session_id, "status": session.status}
+
+
 @router.get("/{session_id}")
 def get_session(session_id: int, db: Session = Depends(get_db)):
     session = db.query(InterviewSession).filter(InterviewSession.id == session_id).first()
@@ -153,6 +187,7 @@ def get_feedback(session_id: int, db: Session = Depends(get_db)):
 
     return {
         "session_id": session_id,
+        "status": session.status,
         "feedbacks": [
             {"answer_id": f.answer_id, "feedback_text": f.feedback_text, "score": f.score}
             for f in session.feedbacks

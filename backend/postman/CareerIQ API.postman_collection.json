@@ -1,27 +1,83 @@
 {
   "info": {
     "_postman_id": "b0c19a68-4f10-4242-8dbe-b8ec0fb53cb3",
-    "name": "CareerIQ API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "55325989",
-    "_collection_link": "https://go.postman.co/collection/55325989-b0c19a68-4f10-4242-8dbe-b8ec0fb53cb3?source=collection_link"
+    "name": "zzuck API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "session_id",
+      "value": ""
+    }
+  ],
   "item": [
     {
       "name": "Health Check",
       "request": {
         "method": "GET",
-        "header": []
-      },
-      "response": []
+        "url": "{{base_url}}/health"
+      }
     },
     {
       "name": "OpenAI Test",
       "request": {
         "method": "GET",
-        "header": []
-      },
-      "response": []
+        "url": {
+          "raw": "{{base_url}}/openai?question=hello",
+          "host": ["{{base_url}}"],
+          "path": ["openai"],
+          "query": [{ "key": "question", "value": "hello" }]
+        }
+      }
+    },
+    {
+      "name": "Start Interview",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/interviews",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"interview_type\": \"technical\",\n  \"resume\": \"3 years Python backend experience, FastAPI, PostgreSQL\",\n  \"job_description\": \"Backend engineer role requiring Python and system design\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Submit Answer",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/interviews/{{session_id}}/answers",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question_id\": 1,\n  \"answer\": \"I would use a queue-based approach to handle this problem...\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Complete Interview",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/interviews/{{session_id}}/complete"
+      }
+    },
+    {
+      "name": "Get Session",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/interviews/{{session_id}}"
+      }
+    },
+    {
+      "name": "Get Feedback",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/interviews/{{session_id}}/feedback"
+      }
     }
   ]
 }
