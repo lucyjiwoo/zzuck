@@ -1,6 +1,6 @@
 # Infra
 
-AWS CDK (Python) project that defines all cloud infrastructure for zzuck. Resources are organized into focused constructs under `infra_components/` and assembled in `stacks/core_infra_stack.py`.
+AWS CDK (Python) project that defines all cloud infrastructure for Career IQ. Resources are organized into focused constructs under `infra_components/` and assembled in `stacks/core_infra_stack.py`.
 
 ## Stack
 
@@ -16,7 +16,7 @@ AWS CDK (Python) project that defines all cloud infrastructure for zzuck. Resour
 infra/
 ├── app.py                        # CDK app entrypoint
 ├── stacks/
-│   └── core_infra_stack.py       # ZzuckStack — assembles all constructs
+│   └── core_infra_stack.py       # CareerIQStack — assembles all constructs
 └── infra_components/
     ├── networking.py             # VPC, subnets
     ├── compute.py                # ECR, ECS cluster, task definitions, CloudWatch
@@ -32,10 +32,10 @@ infra/
 | Resource | Details |
 |---|---|
 | **VPC** | 2 AZs, public + private isolated subnets, no NAT gateway |
-| **ECR** | `zzuck-backend` repository (5-image lifecycle) |
-| **ECS Cluster** | Fargate cluster (`zzuck`) with Container Insights |
+| **ECR** | `careeriq-backend` repository (5-image lifecycle) |
+| **ECS Cluster** | Fargate cluster (`careeriq`) with Container Insights |
 | **ECS Task Def** | Backend task definition (port 8000) |
-| **CloudWatch** | Log group `/ecs/zzuck-backend`, 1-week retention |
+| **CloudWatch** | Log group `/ecs/careeriq-backend`, 1-week retention |
 
 ### Phase 3+ — Planned
 
@@ -43,7 +43,7 @@ infra/
 |---|---|
 | **NAT Gateway** | Enables private subnet outbound internet access |
 | **RDS** | PostgreSQL 16, private subnet, pgvector extension, auto-rotated secret |
-| **SQS** | `zzuck-jobs` queue + DLQ (3 retries, 14-day retention) |
+| **SQS** | `careeriq-jobs` queue + DLQ (3 retries, 14-day retention) |
 | **S3** | Private bucket for resumes, transcripts, and evaluation reports |
 | **Worker Task Def** | ECS task definition for the worker pool |
 | **Fargate Services** | Backend + worker services with auto-scaling |

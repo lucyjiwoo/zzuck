@@ -1,6 +1,6 @@
 # Frontend
 
-React + TypeScript SPA for the zzuck mock interview platform. Handles the full interview session UX — resume upload, live questioning, and result display. Deployed to Vercel on push to `main`.
+React + TypeScript SPA for the Career IQ mock interview platform. Handles the full interview session UX — resume upload, live questioning, and result display. Deployed to Vercel on push to `main`.
 
 ## Stack
 

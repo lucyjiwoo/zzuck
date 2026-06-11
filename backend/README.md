@@ -43,7 +43,7 @@ API available at `http://localhost:8000`.
 | `OPENAI_API_KEY` | OpenAI API key |
 | `POSTGRES_HOST` | Database host |
 | `POSTGRES_PORT` | Database port (default: `5432`) |
-| `POSTGRES_DB` | Database name (default: `zzuck`) |
+| `POSTGRES_DB` | Database name (default: `careeriq`) |
 | `POSTGRES_USER` | Database user |
 | `POSTGRES_PASSWORD` | Database password |
 | `AWS_REGION` | AWS region (default: `us-east-1`) |

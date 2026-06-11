@@ -29,7 +29,7 @@ class ComputeConstruct(Construct):
         self.backend_repo = ecr.Repository(
             self,
             "BackendRepo",
-            repository_name="zzuck-backend",
+            repository_name="careeriq-backend",
             removal_policy=cdk.RemovalPolicy.RETAIN,
             lifecycle_rules=[
                 # Keep only the 5 most recent images to limit storage cost.
@@ -45,7 +45,7 @@ class ComputeConstruct(Construct):
             self,
             "Cluster",
             vpc=vpc,
-            cluster_name="zzuck",
+            cluster_name="careeriq",
             container_insights=True,
         )
 
@@ -53,7 +53,7 @@ class ComputeConstruct(Construct):
         self.log_group = logs.LogGroup(
             self,
             "BackendLogGroup",
-            log_group_name="/ecs/zzuck-backend",
+            log_group_name="/ecs/careeriq-backend",
             retention=logs.RetentionDays.ONE_WEEK,
             removal_policy=cdk.RemovalPolicy.DESTROY,
         )

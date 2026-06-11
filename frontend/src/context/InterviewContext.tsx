@@ -1,0 +1,1 @@
+// Global interview session state

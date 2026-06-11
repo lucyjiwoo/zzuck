@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
 
     # Single connection string — covers host, port, db, user, password
-    database_url: str = "postgresql://zzuck:zzuck@localhost:5432/zzuck"
+    database_url: str = "postgresql://careeriq:careeriq@localhost:5432/careeriq"
 
     aws_region: str = "us-east-1"
     aws_access_key_id: str = ""
@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     s3_bucket_name: str = ""
 
     # Queue name — stable identifier independent of the full URL
-    queue_name: str = "zzuck-jobs"
+    queue_name: str = "careeriq-jobs"
     # Full URL — set explicitly so CDK URL changes don't require code changes
     sqs_queue_url: str = ""
 

@@ -1,4 +1,4 @@
-# zzuck — AI-Powered SWE Mock Interview Platform
+# Career IQ — AI-Powered SWE Mock Interview Platform
 
 An AI-powered software engineering mock interview platform that conducts adaptive interviews, evaluates answers, and delivers personalized feedback using RAG and OpenAI models.
 

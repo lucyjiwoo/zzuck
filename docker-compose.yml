@@ -5,17 +5,17 @@ services:
   # ─────────────────────────────────────────
   postgres:
     image: pgvector/pgvector:pg16
-    container_name: zzuck-postgres
+    container_name: careeriq-postgres
     environment:
-      POSTGRES_DB: zzuck
-      POSTGRES_USER: zzuck
-      POSTGRES_PASSWORD: zzuck
+      POSTGRES_DB: careeriq
+      POSTGRES_USER: careeriq
+      POSTGRES_PASSWORD: careeriq
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U zzuck -d zzuck"]
+      test: ["CMD-SHELL", "pg_isready -U careeriq -d careeriq"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -25,11 +25,10 @@ services:
   # ─────────────────────────────────────────
   localstack:
     image: localstack/localstack:3
-    container_name: zzuck-localstack
+    container_name: careeriq-localstack
     environment:
       SERVICES: sqs,s3
       DEFAULT_REGION: us-east-1
-      # Init script runs automatically on startup
       LOCALSTACK_VOLUME_DIR: /var/lib/localstack
     ports:
       - "4566:4566"

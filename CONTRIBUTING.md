@@ -79,7 +79,7 @@ docs: update local dev setup instructions
 ```bash
 # Clone and enter repo
 git clone <repo-url>
-cd zzuck
+cd careeriq
 
 # Copy env
 cp .env.example .env

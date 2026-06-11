@@ -26,4 +26,4 @@ class NetworkingConstruct(Construct):
             ],
         )
 
-        cdk.Tags.of(self.vpc).add("Project", "zzuck")
+        cdk.Tags.of(self.vpc).add("Project", "careeriq")

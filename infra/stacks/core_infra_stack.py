@@ -10,7 +10,7 @@ from infra_components.compute import ComputeConstruct
 # from infra_components.messaging import MessagingConstruct
 
 
-class ZzuckStack(cdk.Stack):
+class CareerIQStack(cdk.Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
