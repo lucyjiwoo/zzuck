@@ -6,17 +6,8 @@ _MODEL = "gpt-4.1-nano"
 MAX_FOLLOW_UP_DEPTH = 2
 
 
-def generate_questions(
-    resume: str,
-    job_description: str,
-    interview_type: str,
-) -> list[dict]:
-    """
-    Generate initial interview questions based on the candidate's resume,
-    job description, and interview type.
-
-    Returns a list of question dicts ready to be stored in the session.
-    """
+def generate_questions(resume: str, job_description: str, interview_type: str) -> list[str]:
+    """Returns a list of question strings. IDs are assigned by the DB after insertion."""
     client = get_openai_client()
 
     response = client.responses.create(
@@ -36,41 +27,24 @@ Generate 3 personalized interview questions.
 
 Return ONLY valid JSON in this exact format:
 {{
-  "questions": [
-    "question 1",
-    "question 2",
-    "question 3"
-  ]
+  "questions": ["question 1", "question 2", "question 3"]
 }}
 """,
     )
 
-    result = json.loads(response.output_text)
-
-    return [
-        {
-            "id": f"q{i + 1}",
-            "question": q,
-            "type": "main",
-            "parent_question_id": None,
-            "follow_up_depth": 0,
-        }
-        for i, q in enumerate(result["questions"])
-    ]
+    return json.loads(response.output_text)["questions"]
 
 
 def evaluate_answer(
-    session: dict,
-    current_question: dict,
+    interview_type: str,
+    question_text: str,
     answer: str,
+    follow_up_depth: int,
 ) -> dict:
     """
-    Evaluate a candidate's answer for a given question.
-
-    Returns a dict with:
-      - feedback:          str
-      - weaknesses:        list[str]
-      - follow_up_question: str | None  (None if max depth reached)
+    Returns:
+      feedback, score (0.0–1.0), weaknesses [{weakness_text, category, severity}],
+      follow_up_question (None if max depth reached)
     """
     client = get_openai_client()
 
@@ -79,36 +53,41 @@ def evaluate_answer(
         input=f"""
 You are an interview coach.
 
-Interview type: {session["interview_type"]}
+Interview type: {interview_type}
 
 Question:
-{current_question["question"]}
+{question_text}
 
-User answer:
+Candidate answer:
 {answer}
 
-Evaluate the answer.
-
-Return ONLY valid JSON in this exact format:
+Evaluate the answer and return ONLY valid JSON in this exact format:
 {{
-  "feedback": "clear feedback as a string",
+  "feedback": "clear and constructive feedback",
+  "score": 0.75,
   "weaknesses": [
-    "weakness 1",
-    "weakness 2"
+    {{
+      "weakness_text": "specific weakness description",
+      "category": "e.g. problem solving, communication, system design, algorithms",
+      "severity": "low"
+    }}
   ],
   "follow_up_question": "one adaptive follow-up question"
 }}
 
-If the answer is already strong, still provide one useful follow-up question.
+Rules:
+- score: float between 0.0 and 1.0
+- severity: one of low, medium, high
+- weaknesses: empty list if the answer is strong
+- always include a follow_up_question
 """,
     )
 
     result = json.loads(response.output_text)
 
-    should_follow_up = current_question["follow_up_depth"] < MAX_FOLLOW_UP_DEPTH
-
     return {
         "feedback": result["feedback"],
+        "score": float(result["score"]),
         "weaknesses": result["weaknesses"],
-        "follow_up_question": result["follow_up_question"] if should_follow_up else None,
+        "follow_up_question": result["follow_up_question"] if follow_up_depth < MAX_FOLLOW_UP_DEPTH else None,
     }

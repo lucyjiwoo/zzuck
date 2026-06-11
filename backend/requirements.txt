@@ -3,7 +3,7 @@ uvicorn
 pytest
 
 sqlalchemy
-psycopg[binary]
+psycopg
 alembic
 pgvector
 
